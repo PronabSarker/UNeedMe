@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>UNeedMe</title>
+    {% load static %}
+    <link rel="stylesheet" href="{%static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{%static 'fonts/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{%static 'fonts/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{%static 'css/Contact-Form-Clean.css' %}">
+    <link rel="stylesheet" href="{%static 'css/Footer-Dark.css' %}">
+    <link rel="stylesheet" href="{%static 'css/Login-Form-Clean.css' %}">
+    <link rel="stylesheet" href="{%static 'css/Navigation-Clean.css' %}">
+    <link rel="stylesheet" href="{%static 'css/Navigation-with-Button.css' %}">
+    <link rel="stylesheet" href="{%static 'css/Navigation-with-Search.css' %}">
+    <link rel="stylesheet" href="{%static 'css/Search-Field-With-Icon-1.css' %}">
+    <link rel="stylesheet" href="{%static 'css/Search-Field-With-Icon.css' %}">
+    <link rel="stylesheet" href="{%static 'css/styles.css' %}">
+</head>
+{% block container %}
+<body style="background-color: white;">
+  <nav class="navbar navbar-light navbar-expand-md navigation-clean-button" style="background-color: #292a2c;">
+    <div class="container"><a class="navbar-brand" href="{% url 'index' %}" style="color: white;">UNeedMe</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse"
+            id="navcol-1">
+            <ul class="nav navbar-nav mr-auto">
+                
+                <li class="nav-item" role="presentation"><a class="nav-link" style="color: white;" href="{% url 'contactus' %}">Contact Us</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" style="color: white;" href="{% url 'sector' %}">Sector</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" style="color: white;" href="{% url 'location' %}">Location</a></li>
+            </ul>
+            <span class="navbar-text actions">
+              {% if user.is_authenticated%}
+
+              <a class="login" style="color: white;" href="{% url 'profile' user.id %}">
+                  {% if user.profile.full_name%}
+                  {{user.profile.full_name}}
+                  {% else %}
+                  {{user.username}}
+                  {% endif %}
+              </a>
+              <a class="btn btn-light action-button" role="button" href="/accounts/logout">Log out</a> 
+              {% else %}
+              <a class="login" href="/accounts/login">Log In</a> 
+              <a class="btn btn-light action-button" role="button" href="/accounts/signup" style="color: #ffffff;">Sign Up</a>
+              {% endif %}
+    </div>
+</nav>
+
+<div class="container" style="padding: 50px; background-color: rgb(240, 240, 240); border-radius: 50px;">
+
+  <form method="POST" action="{% url 'profile' user.id %}" enctype="multipart/form-data"> {% csrf_token %}
+    <div class="form-group">
+      <br><br>
+      {% if user.profile.image%}
+                    <img id="avatar" class="avatar round " src="{{user.profile.image.url}}">
+                    {% else %}
+       {% endif %}
+       <label for="image">Profile Picture</label><br>
+       <div class="form-row">
+         <div class="form-group col-lg-6">
+           <input type="file" name="image" class="form-control" id="image">
+         </div>
+     </div>
+                   
+     {% if user.profile.full_name %}
+     <label for="full_name">Name</label>
+     <div class="form-row">
+       <div class="form-group col-lg-6">
+          <input type="text" name="full_name" class="form-control" value="{{ user.profile.full_name }}" id="full_name"  placeholder="Your name ">
+       </div>
+   </div>
+      {%else%}
+      <label for="full_name">Name</label>
+      <div class="form-row">
+        <div class="form-group col-lg-6">
+           <input type="text" name="full_name" class="form-control"  id="full_name"  placeholder="Your name ">
+        </div>
+    </div>
+    {%endif%}
+    
+  </div>
+    <br><br>
+  <h2>Contact Info:</h2><br>
+  <div class="form-row">
+    {% if user.profile.phone %}
+     
+      <div class="col-md-6">
+        <label for="phone">Phone</label>
+        <input type="text" name="phone" class="form-control" value="{{ user.profile.phone }}" id="phone" placeholder="Phone No.">
+      </div>
+      {%else%}
+      <div class="col-md-6">
+        <label for="phone">Phone</label>
+        <input type="text" name="phone" class="form-control" value="add your data" id="phone" placeholder="Phone No.">
+      </div>
+      {%endif%}
+  </div>
+  <div class="form-row">
+    {% if user.profile.location %}
+      <div class="col">
+        <label for="location">Location</label>
+        <input type="text" name="location" class="form-control" value="{{ user.profile.location }}"  id="location" placeholder="Where you want to work/working">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="location">Location</label>
+        <input type="text" name="location" class="form-control"  id="location" placeholder="Where you want to work/working">
+      </div>
+      {%endif%}
+      {% if user.profile.sector %}
+      <div class="col">
+        <label for="sector">Sector</label>
+        <input type="text" name="sector" class="form-control" value="{{ user.profile.sector }}" id="sector">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="sector">Sector</label>
+        <input type="text" name="sector" class="form-control"  id="sector" placeholder="In which sector you want to work/working">
+      </div>
+      {%endif%}
+  </div>
+
+  <br><br><h2>About</h2><br>
+  {% if user.profile.about %}
+  <div class="form-group">
+      <textarea   name="about" class="form-control" id="about" rows="3" value="{{ user.profile.sector }}" placeholder="About yourself"></textarea>
+  </div>
+  {%else%}
+  <div class="form-group">
+    <textarea   name="about" class="form-control" id="about" rows="3" value="{{ user.profile.sector }}" placeholder="About yourself"></textarea>
+</div>
+{%endif%}
+  <br><br><h2>Education</h2>
+
+
+  <br>
+ 
+  
+  <div class="form-row" id="div_1">
+    {% if user.profile.institute1 %}
+      <div class="col">
+        <label for="institute1">Institution Name</label>
+        <input type="text" name= "institute1" class="form-control" id="institute1" value="{{ user.profile.institute1 }}" placeholder="Institute name">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="institute1">Institution Name</label>
+        <input type="text" name= "institute1" class="form-control" id="institute1"  placeholder="Institute name">
+      </div>
+      {%endif%}
+      {% if user.profile.degree1 %}
+      <div class="col">
+        <label for="degree1">Degree</label>
+        <input type="text" name= "degree1" class="form-control" id="degree1" value="{{ user.profile.degree1 }}" placeholder="Degree">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="degree1">Degree</label>
+        <input type="text" name= "degree1" class="form-control" id="degree1"  placeholder="Degree">
+      </div>
+      {%endif%}
+      {% if user.profile.year1 %}
+      <div class="col">
+        <label for="year1">Year of passing</label>
+        <input type="number" name="year1" class="form-control" id="year1" value="{{ user.profile.year1 }}" placeholder="Year of passing">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="year1">Year of passing</label>
+        <input type="number" name="year1" class="form-control" id="year1" placeholder="Year of passing">
+      </div>
+      {%endif%}
+      {% if user.profile.grade1 %}
+      <div class="col">
+        <label for="grade1">Grade</label>
+        <input type="text" name="grade1" class="form-control" id="grade1" value="{{ user.profile.grade1 }}" placeholder="Your passing grade">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="grade1">Grade</label>
+        <input type="text" name="grade1" class="form-control" id="grade1"  placeholder="Your passing grade">
+      </div>
+      {%endif%}
+  </div> 
+   
+
+      <br>
+       <div class="form-row div_2" style="display: none;">
+        {% if user.profile.institute2 %}
+        <div class="col">
+          <label for="institute2">Institution Name</label>
+          <input type="text" name= "institute2" class="form-control" id="institute2" value="{{ user.profile.institute2 }}" placeholder="Institute name">
+        </div>
+        {%else%}
+        <div class="col">
+          <label for="institute2">Institution Name</label>
+          <input type="text" name= "institute2" class="form-control" id="institute2"  placeholder="Institute name">
+        </div>
+        {%endif%}
+        {% if user.profile.degree2 %}
+        <div class="col">
+          <label for="degree2">Degree</label>
+          <input type="text" name= "degree2" class="form-control" id="degree2" value="{{ user.profile.degree2 }}" placeholder="Degree">
+        </div>
+        {%else%}
+        <div class="col">
+          <label for="degree2">Degree</label>
+          <input type="text" name= "degree2" class="form-control" id="degree2"  placeholder="Degree">
+        </div>
+        {%endif%}
+        {% if user.profile.year2 %}
+        <div class="col">
+          <label for="year2">Year of passing</label>
+          <input type="number" name="year2" class="form-control" id="year2" value="{{ user.profile.year2 }}" placeholder="Year of passing">
+        </div>
+        {%else%}
+        <div class="col">
+          <label for="year2">Year of passing</label>
+          <input type="number" name="year2" class="form-control" id="year2" placeholder="Year of passing">
+        </div>
+        {%endif%}
+        {% if user.profile.grade2 %}
+        <div class="col">
+          <label for="grade2">Grade</label>
+          <input type="text" name="grade2" class="form-control" id="grade2" value="{{ user.profile.grade2 }}" placeholder="Your passing grade">
+        </div>
+        {%else%}
+        <div class="col">
+          <label for="grade2">Grade</label>
+          <input type="text" name="grade2" class="form-control" id="grade2"  placeholder="Your passing grade">
+        </div>
+        {%endif%}
+         
+
+
+      </div> 
+
+      <br>
+     <div class="form-row div_2" style="display: none;">
+      {% if user.profile.institute3 %}
+      <div class="col">
+        <label for="institute3">Institution Name</label>
+        <input type="text" name= "institute3" class="form-control" id="institute3" value="{{ user.profile.institute3 }}" placeholder="Institute name">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="institute3">Institution Name</label>
+        <input type="text" name= "institute3" class="form-control" id="institute3"  placeholder="Institute name">
+      </div>
+      {%endif%}
+      {% if user.profile.degree3 %}
+      <div class="col">
+        <label for="degree3">Degree</label>
+        <input type="text" name= "degree3" class="form-control" id="degree3" value="{{ user.profile.degree3 }}" placeholder="Degree">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="degree3">Degree</label>
+        <input type="text" name= "degree3" class="form-control" id="degree3"  placeholder="Degree">
+      </div>
+      {%endif%}
+      {% if user.profile.year3 %}
+      <div class="col">
+        <label for="year3">Year of passing</label>
+        <input type="number" name="year3" class="form-control" id="year3" value="{{ user.profile.year3 }}" placeholder="Year of passing">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="year3">Year of passing</label>
+        <input type="number" name="year3" class="form-control" id="year3" placeholder="Year of passing">
+      </div>
+      {%endif%}
+      {% if user.profile.grade3 %}
+      <div class="col">
+        <label for="grade3">Grade</label>
+        <input type="text" name="grade3" class="form-control" id="grade3" value="{{ user.profile.grade3 }}" placeholder="Your passing grade">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="grade3">Grade</label>
+        <input type="text" name="grade3" class="form-control" id="grade3"  placeholder="Your passing grade">
+      </div>
+      {%endif%}
+      </div> 
+
+      <br>
+     
+
+      <button type="button" class="btn btn-primary" onclick="add()">Add/Show</button>
+
+  <br><br><h2>Skills</h2><br>
+  {% if user.profile.skills %}
+  <div class="form-group">
+      <textarea  name="skills" class="form-control" id="skills" rows="3" placeholder="Enter each skill with Comma ',' separated">{{ user.profile.skills }}</textarea>
+  </div>
+  {%else%}
+  <div class="form-group">
+    <textarea  name="skills" class="form-control" id="skills" rows="3" placeholder="Enter each skill with Comma ',' separated"></textarea>
+</div>
+  {%endif%}
+
+  <br><br><h2>Digital Certifications</h2><br>
+  {% if user.profile.certifications %}
+  <div class="form-group">
+      <textarea  name="certifications" class="form-control" id="certifications" rows="3" placeholder="Before each description add '*' ">{{ user.profile.certifications }}</textarea>
+  </div>
+  {%else%}
+  <div class="form-group">
+    <textarea  name="certifications" class="form-control" id="certifications" rows="3" placeholder="Before each description add '*' "></textarea>
+</div>
+  {%endif%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <br><br>
+  <h2>Experience</h2><br>
+   
+  <div class="form-row" id="div_3">
+    {% if user.profile.companyname1 %}
+    <div class="col">
+      <label for="companyname1">Company Name</label>
+      <input type="text" name="companyname1" class="form-control" id="companyname1" value="{{ user.profile.companyname1 }}"placeholder="Company Name">
+    </div>
+    {%else%}
+    <div class="col">
+      <label for="companyname1">Company Name</label>
+      <input type="text" name="companyname1" class="form-control" id="companyname1" placeholder="Company Name">
+    </div>
+    {%endif%}
+    {% if user.profile.position1 %}
+    <div class="col">
+      <label for="position1">Position</label>
+      <input type="text" name= "position1" class="form-control" id="position1" value="{{ user.profile.position1 }}" placeholder="Position">
+    </div>
+    {%else%}
+    <div class="col">
+      <label for="position1">Position</label>
+      <input type="text" name= "position1" class="form-control" id="position1" value="{{ user.profile.position1 }}" placeholder="Position">
+    </div>
+    {%endif%}
+    {% if user.profile.duty1 %}
+    <div class="col">
+      <label for="duty1">Duty</label>
+      <input type="text" name="duty1" class="form-control" id="duty1" value="{{ user.profile.duty1 }}" placeholder="Duty">
+    </div>
+    {%else%}
+    <div class="col">
+      <label for="duty1">Duty</label>
+      <input type="text" name="duty1" class="form-control" id="duty1"  placeholder="Duty">
+    </div>
+    {%endif%}
+    {% if user.profile.timeperiod1 %}
+    <div class="col">
+      <label for="timeperiod1">Duration of staying</label>
+      <input type="text" name="timeperiod1" class="form-control" id="timeperiod1" value="{{ user.profile.timeperiod1 }}" placeholder="Duration of staying">
+    </div>
+    {%else%}
+    <div class="col">
+      <label for="timeperiod1">Duration of staying</label>
+      <input type="text" name="timeperiod1" class="form-control" id="timeperiod1" placeholder="Duration of staying">
+    </div>
+    {%endif%}
+</div> 
+ 
+
+    <br>
+     <div class="form-row div_4" style="display: none;">
+      {% if user.profile.companyname2 %}
+      <div class="col">
+        <label for="companyname2">Company Name</label>
+        <input type="text" name="companyname2" class="form-control" id="companyname2" value="{{ user.profile.companyname2 }}"placeholder="Company Name">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="companyname2">Company Name</label>
+        <input type="text" name="companyname2" class="form-control" id="companyname2" placeholder="Company Name">
+      </div>
+      {%endif%}
+      {% if user.profile.position2 %}
+      <div class="col">
+        <label for="position2">Position</label>
+        <input type="text" name= "position2" class="form-control" id="position2" value="{{ user.profile.position2 }}" placeholder="Position">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="position2">Position</label>
+        <input type="text" name= "position2" class="form-control" id="position2"  placeholder="Position">
+      </div>
+      {%endif%}
+      {% if user.profile.duty2 %}
+      <div class="col">
+        <label for="duty2">Duty</label>
+        <input type="text" name="duty2" class="form-control" id="duty2" value="{{ user.profile.duty2 }}" placeholder="Duty">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="duty2">Duty</label>
+        <input type="text" name="duty2" class="form-control" id="duty2"  placeholder="Duty">
+      </div>
+      {%endif%}
+      {% if user.profile.timeperiod2 %}
+      <div class="col">
+        <label for="timeperiod2">Duration of staying</label>
+        <input type="text" name="timeperiod2" class="form-control" id="timeperiod2" value="{{ user.profile.timeperiod2 }}" placeholder="Duration of staying">
+      </div>
+      {%else%}
+      <div class="col">
+        <label for="timeperiod2">Duration of staying</label>
+        <input type="text" name="timeperiod2" class="form-control" id="timeperiod2" placeholder="Duration of staying">
+      </div>
+      {%endif%}
+
+    </div> 
+    <div class="form-row div_4" style="display: none;">
+      {% if user.profile.companyname3 %}
+    <div class="col">
+      <label for="companyname3">Company Name</label>
+      <input type="text" name="companyname3" class="form-control" id="companyname3" value="{{ user.profile.companyname3 }}"placeholder="Company Name">
+    </div>
+    {%else%}
+    <div class="col">
+      <label for="companyname3">Company Name</label>
+      <input type="text" name="companyname3" class="form-control" id="companyname3" placeholder="Company Name">
+    </div>
+    {%endif%}
+    {% if user.profile.position3 %}
+    <div class="col">
+      <label for="position3">Position</label>
+      <input type="text" name= "position3" class="form-control" id="position3" value="{{ user.profile.position3 }}" placeholder="Position">
+    </div>
+    {%else%}
+    <div class="col">
+      <label for="position3">Position</label>
+      <input type="text" name= "position3" class="form-control" id="position3"  placeholder="Position">
+    </div>
+    {%endif%}
+    {% if user.profile.duty3 %}
+    <div class="col">
+      <label for="duty3">Duty</label>
+      <input type="text" name="duty3" class="form-control" id="duty3" value="{{ user.profile.duty3 }}" placeholder="Duty">
+    </div>
+    {%else%}
+    <div class="col">
+      <label for="duty3">Duty</label>
+      <input type="text" name="duty3" class="form-control" id="duty3"  placeholder="Duty">
+    </div>
+    {%endif%}
+    {% if user.profile.timeperiod3 %}
+    <div class="col">
+      <label for="timeperiod3">Duration of staying</label>
+      <input type="text" name="timeperiod3" class="form-control" id="timeperiod3" value="{{ user.profile.timeperiod3 }}" placeholder="Duration of staying">
+    </div>
+    {%else%}
+    <div class="col">
+      <label for="timeperiod3">Duration of staying</label>
+      <input type="text" name="timeperiod3" class="form-control" id="timeperiod3" placeholder="Duration of staying">
+    </div>
+    {%endif%}
+    </div>
+    <button type="button" class="btn btn-primary" onclick="ad()">+Add/Show</button>
+
+
+
+  <br><br><h2><label for="project">Projects</label></h2><br>
+  {% if user.profile.project %}
+  <div class="form-group" id="project">
+      <textarea  name="project" class="form-control" id="project" rows="8"  placeholder="Use '#' before the Title and '*' before its description">{{ user.profile.project }}</textarea>
+  </div>
+  {%else%}
+  <div class="form-group" id="project">
+    <testarea name="project" class="form-control" id="project" rows="8">Use '#' before the Title and '*' before its description</textarea>
+</div>
+  {%endif%}
+
+  <br><br><h2>Interests</h2><br>
+  {% if user.profile.interest %}
+  <div class="form-group" id="interest">
+      <textarea  name="interest" class="form-control" id="interest" rows="8" placeholder="Before each description add '*' ">{{ user.profile.interest }}</textarea>
+  </div>
+  {%else%}
+  <div class="form-group" id="interest">
+    <textarea  name="interest" class="form-control" id="interest" rows="8" placeholder="Before each description add '*' "></textarea>
+</div>
+  {%endif%}
+  <br><br><button type="submit" class="btn btn-primary">Save</button>
+
+</form>
+</div>
+
+
+<div class="footer-dark" style="background-color: black;">
+  <footer>
+      <div class="container">
+          <div class="row">
+              <div class="col-sm-6 col-md-3 item">
+                  <h3>Services</h3>
+                  <ul>
+                      <li><a href="#">IT</a></li>
+                      <li><a href="#">Bussiness</a></li>
+                      <li><a href="#">and many more</a></li>
+                  </ul>
+              </div>
+              <div class="col-sm-6 col-md-3 item">
+                  <h3>About</h3>
+                  <ul>
+                      <li><a href="#">Company</a></li>
+                      <li><a href="#">Team</a></li>
+                      <li><a href="#">Careers</a></li>
+                  </ul>
+              </div>
+              <div class="col-md-6 item text">
+                  <h3>UNeedMe</h3>
+                  <p><br>Where recruiters come to recruit highly skilled individuals.We provide a platform where individuals can show up skills to the whole world to be recruited.<br><br></p>
+              </div>
+              <div class="col item social"><a href="#"><i class="icon ion-social-youtube"></i></a><a href="#"><i class="icon ion-email"></i></a><a href="#"><i class="icon ion-social-linkedin"></i></a><a href="#"><i class="icon ion-social-twitter"></i></a><a href="#"><i class="icon ion-social-facebook"></i></a></div>
+          </div>
+          <p class="copyright">UNeedMe © 2020</p>
+      </div>
+  </footer>
+</div>
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+<script> function add() {
+// for(var i=0;i<4;i++){
+// document.getElementById("div_2").style.display = "block";
+//}
+
+$('.div_2').each(function(i, obj) {
+//alert($(this).css("display"));
+if($(this).css("display") == "none"){
+      $(this).css("display", "block"); 
+      return false;
+      
+  }
+ // break;
+
+});
+}
+
+
+
+
+
+</script>
+
+
+
+<script> function ad() {
+// for(var i=0;i<4;i++){
+// document.getElementById("div_2").style.display = "block";
+//}
+
+$('.div_4').each(function(i, obj) {
+//alert($(this).css("display"));
+if($(this).css("display") == "none"){
+    $(this).css("display", "block"); 
+    return false;
+    
+}
+// break;
+
+});
+}
+
+
+
+
+
+</script>
+
+</body>
+
+</html>
+{% endblock %}
